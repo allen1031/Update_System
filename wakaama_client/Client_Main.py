@@ -159,7 +159,7 @@ def UpdateManagement():
 	
 	print "downloading is starting"
 
-	exit_code = SWUpdate("./update-git.sh",package_url)
+	exit_code = SWUpdate("./download.sh",package_url)
 	
 	print "downloading is finished"
 	update_state = 3

@@ -172,58 +172,9 @@ class SP():
 	def __Start_httpserver(self):
 		try:
 			self.__httpserver = subprocess.Popen(['python','-m','SimpleHTTPServer','8080'],stdout=subprocess.PIPE, stdin=subprocess.PIPE)
-			'''
-			self.__httpserver_1 = subprocess.Popen(['python','-m','SimpleHTTPServer','8081'],stdout=subprocess.PIPE, stdin=subprocess.PIPE)
-			self.__httpserver_2 = subprocess.Popen(['python','-m','SimpleHTTPServer','8082'],stdout=subprocess.PIPE, stdin=subprocess.PIPE)
-			self.__httpserver_3 = subprocess.Popen(['python','-m','SimpleHTTPServer','8083'],stdout=subprocess.PIPE, stdin=subprocess.PIPE)
-			self.__httpserver_4 = subprocess.Popen(['python','-m','SimpleHTTPServer','8084'],stdout=subprocess.PIPE, stdin=subprocess.PIPE)
-			self.__httpserver_5 = subprocess.Popen(['python','-m','SimpleHTTPServer','8085'],stdout=subprocess.PIPE, stdin=subprocess.PIPE)
-			self.__httpserver_6 = subprocess.Popen(['python','-m','SimpleHTTPServer','8086'],stdout=subprocess.PIPE, stdin=subprocess.PIPE)
-			self.__httpserver_7 = subprocess.Popen(['python','-m','SimpleHTTPServer','8087'],stdout=subprocess.PIPE, stdin=subprocess.PIPE)
-			self.__httpserver_8 = subprocess.Popen(['python','-m','SimpleHTTPServer','8088'],stdout=subprocess.PIPE, stdin=subprocess.PIPE)
-			self.__httpserver_9 = subprocess.Popen(['python','-m','SimpleHTTPServer','8089'],stdout=subprocess.PIPE, stdin=subprocess.PIPE)
-			self.__httpserver_10 = subprocess.Popen(['python','-m','SimpleHTTPServer','8090'],stdout=subprocess.PIPE, stdin=subprocess.PIPE)
-			self.__httpserver_11 = subprocess.Popen(['python','-m','SimpleHTTPServer','8091'],stdout=subprocess.PIPE, stdin=subprocess.PIPE)
-			self.__httpserver_12 = subprocess.Popen(['python','-m','SimpleHTTPServer','8092'],stdout=subprocess.PIPE, stdin=subprocess.PIPE)
-			self.__httpserver_13 = subprocess.Popen(['python','-m','SimpleHTTPServer','8093'],stdout=subprocess.PIPE, stdin=subprocess.PIPE)
-			self.__httpserver_14 = subprocess.Popen(['python','-m','SimpleHTTPServer','8094'],stdout=subprocess.PIPE, stdin=subprocess.PIPE)
-			self.__httpserver_15 = subprocess.Popen(['python','-m','SimpleHTTPServer','8095'],stdout=subprocess.PIPE, stdin=subprocess.PIPE)
-			self.__httpserver_16 = subprocess.Popen(['python','-m','SimpleHTTPServer','8096'],stdout=subprocess.PIPE, stdin=subprocess.PIPE)
-			self.__httpserver_17 = subprocess.Popen(['python','-m','SimpleHTTPServer','8097'],stdout=subprocess.PIPE, stdin=subprocess.PIPE)
-			self.__httpserver_18 = subprocess.Popen(['python','-m','SimpleHTTPServer','8098'],stdout=subprocess.PIPE, stdin=subprocess.PIPE)
-			self.__httpserver_19 = subprocess.Popen(['python','-m','SimpleHTTPServer','8099'],stdout=subprocess.PIPE, stdin=subprocess.PIPE)
-			'''
-			
-			
-			
 		except :
 			return False
-			
 		self.__nbsr_file_transfer = NBSR(self.__httpserver.stdout)
-		'''
-		self.__nbsr_file_transfer_1 = NBSR(self.__httpserver_1.stdout)
-		self.__nbsr_file_transfer_2 = NBSR(self.__httpserver_2.stdout)
-		self.__nbsr_file_transfer_3 = NBSR(self.__httpserver_3.stdout)
-		self.__nbsr_file_transfer_4 = NBSR(self.__httpserver_4.stdout)
-		self.__nbsr_file_transfer_5 = NBSR(self.__httpserver_5.stdout)
-		self.__nbsr_file_transfer_6 = NBSR(self.__httpserver_6.stdout)
-		self.__nbsr_file_transfer_7 = NBSR(self.__httpserver_7.stdout)
-		self.__nbsr_file_transfer_8 = NBSR(self.__httpserver_8.stdout)
-		self.__nbsr_file_transfer_9 = NBSR(self.__httpserver_9.stdout)
-		self.__nbsr_file_transfer_10 = NBSR(self.__httpserver_10.stdout)
-		self.__nbsr_file_transfer_11 = NBSR(self.__httpserver_11.stdout)
-		self.__nbsr_file_transfer_12 = NBSR(self.__httpserver_12.stdout)
-		self.__nbsr_file_transfer_13 = NBSR(self.__httpserver_13.stdout)
-		self.__nbsr_file_transfer_14 = NBSR(self.__httpserver_14.stdout)
-		self.__nbsr_file_transfer_15 = NBSR(self.__httpserver_15.stdout)
-		self.__nbsr_file_transfer_16 = NBSR(self.__httpserver_16.stdout)
-		self.__nbsr_file_transfer_17 = NBSR(self.__httpserver_17.stdout)
-		self.__nbsr_file_transfer_18 = NBSR(self.__httpserver_18.stdout)
-		self.__nbsr_file_transfer_19 = NBSR(self.__httpserver_19.stdout)
-		'''
-		#self.__nbsr_file_transfer = NBSR(self.__httpserver.stdout)
-		#self.__nbsr_file_transfer_cy = NBSR(self.__httpserver_cy.stdout)
-		#print self.__nbsr_file_transfer
 		print "http servers begin successfully"
 		return True
 		
@@ -418,6 +369,70 @@ class SP():
 	############################################Wakaama Client API########################################
 	######################################################################################################
 	
+
+	
+	
+	def HTTP_URL_PARSE(self, url):
+		
+		url_comp = url.split("/")
+		
+		print url_comp
+		
+		if len(url_comp) <= 1 or url.find("http") < 0 or url.find("https") < 0:
+			
+			url_comp = None
+			
+		return url_comp
+		
+	def SWDownload(self,package_url):	
+	
+		try:
+			url_comp = self.HTTP_URL_PARSE(package_url)
+			
+			if url_comp == None:
+				print INVALID_URL
+				return False
+			
+			content = url_comp[len(url_comp)-1]
+			print content
+
+			UpdateProcess = subprocess.Popen(["sudo","wget",package_url],stdout=subprocess.PIPE, stdin=subprocess.PIPE)
+		except:
+			print "some thing bad happens"
+			return False 
+
+	
+		exit_code = UpdateProcess.wait()
+		
+		print exit_code
+		
+		if exit_code == 0:
+			print "package is received in local"
+			return True
+			
+		return False
+
+	def Download_and_Forward(self, url,localhost):
+		
+		download_res = self.SWDownload(url)
+		
+		value = None
+		
+		port = 8080
+		
+		if download_res == True:
+		
+			url_comp = self.HTTP_URL_PARSE(url)
+			
+			content = url_comp[len(url_comp)-1]
+			
+			value = "http://" + localhost +":"+ str(port) +"/" + content
+			
+			print value
+			
+			
+		return value
+		
 	
 	def __Parser(self,line1,line2,line3):
 
@@ -619,11 +634,11 @@ class SP():
 		self.ClientDBInit(db_ip,db,collection,key,group_size) 
 		start_time = time.time()
 		
-		port = 8080;
+		
 		while True:
 			if i >= int(group_size):
 				break
-			value = "http://" + localhost +":"+ str(port) +"/" + package_url
+			#value = "http://" + localhost +":"+ str(port) +"/" + package_url
 			#port = port + 1
 			#if (port > 8080):
 			#	port = 8080
@@ -679,569 +694,7 @@ class SP():
 			value = ""
 		
 		return value
-	######################################################################################################
-	############################################Leshan Client API#########################################
-	######################################################################################################
 		
-	'''
-		READ REQUEST 
-	'''
-	
-	def ReadNumFromLwm2m(self, clientNo , url):
-		
-		line = 0;
-		
-		if not self.urlParse(url) == URL_SUCCESS:
-			return INVALID_URL
-		#print "url is valid"
-		
-		'''
-			start the read request
-		'''
-		READ_REQUEST = READ_COMMAND + ' ' + str(clientNo) + ' ' + url
-		print READ_REQUEST
-		
-		self.__lwm2m.stdin.write(READ_REQUEST)
-		
-		tmp_output = " "
-		
-		value = 'None'
-		
-		search_key = "Client #" + str(clientNo) + " " + url + " : " + "2.05"
-		
-		while tmp_output:	
-			print "The {} line is : {}".format(line, tmp_output)
-			if tmp_output.find(search_key) >= 0:	
-				while True:
-					if tmp_output.find("data as Float") >= 0:	
-						print "The {} line is : {}".format(line, tmp_output)
-						start = tmp_output.find(":") + 2
-						end = tmp_output.find("\r")
-						
-						value = tmp_output[start:end]
-						break
-						
-					tmp_output = self.__nbsr.readline(0.01)
-			
-			tmp_output = self.__nbsr.readline(0.01)
-		
-		return value
-			
-		
-	def WriteToLwm2m(self, db, collection, key, clientNo , url, write_value):
-		
-		line = 0
-		self.urlParse(url)
-		
-	
-		'''
-			start the write request 
-		'''
-		WRITE_REQUEST = WRITE_COMMAND + " " + str(clientNo) + " " + url + " " + str(write_value)
-		self.__lwm2m.stdin.write(WRITE_REQUEST)	
-
-		
-		primary_search = "Client #" + str(clientNo) + " " + url + " : "
-		search_key = "Client #" + str(clientNo) + " " + url + " : " + "2.04"
-		
-		print WRITE_REQUEST
-		
-		write_mark = 0
-		tmp_output = " "
-		while tmp_output:	
-		
-			print "The {} line is : {}".format(line, tmp_output)
-			line = line + 1
-			
-			if tmp_output.find(primary_search) >= 0:
-				write_mark = 1
-				
-			if tmp_output.find(search_key) >= 0:
-				#write_mark = 1
-				return WRITE_SUCCESS
-			
-			tmp_output = self.__nbsr.readline(0.01) 
-		
-		if write_mark == 0:
-			return 'None'
-		else:
-			return WRITE_FAILURE
-		
-	def ExecToLwm2m(self, db, collection, key, clientNo , url):	
-		
-		line = 0
-		
-		EXECUTE_REQUEST = EXECUTE_COMMAND + " " + str(clientNo) + " " + url 
-			
-		print EXECUTE_REQUEST
-		
-		self.__lwm2m.stdin.write(EXECUTE_REQUEST)
-		
-		time.sleep(0.1)
-		
-		primary_search = "Client #" + str(clientNo) + " " + url + " : "
-		search_key = "Client #" + str(clientNo) + " " + url + " : " + "2.04"
-		
-		exec_mark = 0
-		tmp_output = " "
-		while tmp_output:	
-		
-			#print "The {} line is : {}".format(line, tmp_output)
-			line = line + 1
-			
-			if tmp_output.find(primary_search) >= 0:
-				exec_mark = 1
-				
-			if tmp_output.find(search_key) >= 0:
-				return EXECUTE_SUCCESS
-			
-			tmp_output = self.__nbsr.readline(0.01) 
-		
-		if exec_mark == 0:
-			return 'None'
-		else:
-			return EXECUTE_FAILURE
-		
-	def UpdateResult(self,clientNo):
-		
-		update_state_url = '/10400/0/1'
-		update_result_url = '/10400/0/4'
-		update_duration_url = '/10400/0/6'
-		
-		
-		
-		state = self.ReadNumFromLwm2m(clientNo, update_state_url)
-		while state == 'None':
-			state = self.ReadNumFromLwm2m(clientNo, update_state_url)
-		
-		result = self.ReadNumFromLwm2m(clientNo, update_result_url)
-		while result == 'None':
-			result = self.ReadNumFromLwm2m(clientNo, update_result_url)
-		
-		print "state at present : {}".format(state) 
-		print "result at present : {}".format(result)
-		
-		while str(state) != "1" or str(result) == "0":
-			time.sleep(0.5)
-			state = self.ReadNumFromLwm2m(clientNo, update_state_url)
-			while state == 'None':
-				state = self.ReadNumFromLwm2m(clientNo, update_state_url)
-		
-			result = self.ReadNumFromLwm2m(clientNo, update_result_url)
-			while result == 'None':
-				result = self.ReadNumFromLwm2m(clientNo, update_result_url)
-		
-		duration = self.ReadNumFromLwm2m(clientNo, update_duration_url)
-		while duration == 'None':
-			duration = self.ReadNumFromLwm2m(clientNo, update_duration_url)
-			
-		print "time in device costs :{}".format(duration)
-		
-		self.__client_duration.update({str(clientNo) : duration})
-		if str(result) == "1":
-			return True
-		else:
-			return False
-		
-		
-	
-	def GroupUpdate(self,db,collection,key,group_size,target_url):
-		
-		print "start update 0"
-		i = 0
-		url = CONTAINER_NAME #/10400/0/0
-		exe = CONTAINER_UPDATE
-		value = target_url
-		processed_node = 0
-		successful_node = 0
-		failed_node = 0
-		post = {Data.NUM_PROCESSED_NODE: processed_node,Data.NUM_SUCCESSFUL_NODE:successful_node, Data.NUM_FAILED_NODE:failed_node}
-		db.updateDB(collection, key, post)
-		
-		print "start update 1"
-		
-		while True:
-			if i >= int(group_size):
-				break
-				
-			write_result = self.WriteToLwm2m(db, collection, key, i , url, value)
-			while write_result == 'None':
-				write_result = self.WriteToLwm2m(db, collection, key, i , url, value)
-			
-			if write_result != WRITE_SUCCESS:
-				print "client {} write failure".format(i)
-				#failed_node = failed_node + 1
-				#processed_node = processed_node + 1
-				process[i] = 0
-			else:
-				print "client {} write success".format(i)
-				process[i] = 1
-				exec_result = self.ExecToLwm2m(db, collection, key, i, exe)
-				if exec_result != EXECUTE_SUCCESS:
-					time.sleep(0.1)
-
-			i = i + 1
-		
-		
-		i = 0
-		while True:
-			if i >= int(group_size):
-				break
-			if process[i] == 1:
-				result = self.UpdateResult(i)
-				if result == True:
-					successful_node = successful_node + 1
-				else:
-					failed_node = failed_node + 1
-			else:
-				failed_node = failed_node + 1
-			i = i + 1
-			
-			processed_node = processed_node + 1
-			print "processed node:{}, success node:{}, failed node:{}".format(processed_node,successful_node,failed_node)
-			post = {Data.NUM_PROCESSED_NODE: processed_node,Data.NUM_SUCCESSFUL_NODE:successful_node, Data.NUM_FAILED_NODE:failed_node, Data.TIME_CONSUMPTION:self.__client_duration}
-			db.updateDB(collection, key, post)
-		
-		
-			
-			
-	#######################################################################################################################
-	#######################################################################################################################
-		
-		
-	
-	def ClientReader(self, db, collection, key, clientNo , url):
-	
-		line = 0	
-
-		if not self.urlParse(url) == URL_SUCCESS:
-			
-			
-			'''
-				WRITE TO DATABASE
-			'''
-			#self.Lwm2mClientWrite(Data.VALUE,INVALID_URL)
-			post = {Data.VALUE:INVALID_URL}
-			db.updateDB(mycoll,key,post)
-			
-			
-			
-			self.clientOutputDisplay();
-			
-			return INVALID_URL
-		
-		print "url is valid"
-		
-		valid_result = self.requestValidation(db, collection, key, clientNo,self.__obj)
-		
-		print "object is success"
-		
-		if str(valid_result) != OBJ_SUCCESS:
-		
-			print valid_result
-		
-			return valid_result
-			
-		print "Read requeset is valid"
-		
-		'''
-			start the read request
-		'''
-		
-		READ_REQUEST = READ_COMMAND + ' ' + clientNo + ' ' + url
-		
-		print READ_REQUEST
-		
-		self.__lwm2m.stdin.write(READ_REQUEST)
-		
-		#print request
-		
-		tmp_output = self.__nbsr.readline(0.01) 
-		
-		read_mark = 0
-		
-		while tmp_output:	
-		
-			print "The {} line is : {}".format(line, tmp_output)
-			
-			if tmp_output.find(READ_BYTE) >= 0:
-			
-				read_mark = 1
-				
-				end = tmp_output.find(READ_BYTE)
-			
-				start0 = end - 2
-				
-				start1 = end - 1
-				
-				if start0 == " ":
-					start = start1
-				else:
-					start = start0
-					
-				start = 4
-				
-				packet_size = int(tmp_output[start:end])
-				
-				print "packet size is {}".format(packet_size)
-						
-			
-			if tmp_output.find(C1) >= 0:	
-
-				print tmp_output.find(C1)
-				
-				start = tmp_output.find(C1) + (packet_size-1) * 3 
-				
-				print start 
-				
-				end = tmp_output.find("...")
-				
-				print end
-				
-				int_value = int(tmp_output[start:end])
-				
-				print "integer value is {}".format(int_value)
-				
-				'''
-				WRITE TO DATABASE
-				'''
-				post = {Data.VALUE:int_value}
-				db.updateDB(mycoll,key,post)
-				#self.Lwm2mClientWrite(Data.VALUE,int_value)
-				
-				self.clientOutputDisplay()
-				
-				return READ_SUCCESS
-				
-				
-			if tmp_output.find(".") >= 0 and tmp_output.count("Client") <=0 and tmp_output.find(C1) < 0:
-			
-				count = tmp_output.count(".")
-				
-				start = tmp_output.find(".") + count
-				
-				end = tmp_output.find("\r")
-				
-				str_value = str(tmp_output[start:end])
-				
-				if str_value != " ":
-				
-					print "string value is {}".format(str_value)
-					
-					#self.Lwm2mClientWrite(Data.VALUE,str_value)
-				
-					'''
-					WRITE TO DATABASE
-					'''
-					post = {Data.VALUE:str_value, Data.READ_VALUE:str_value}
-					db.updateDB(mycoll,key,post)
-					
-					
-					self.clientOutputDisplay();				
-					
-				return READ_SUCCESS
-				
-			
-			line = line + 1
-			
-			tmp_output = self.__nbsr.readline(0.01) 
-			
-			#tmp_output = self.stdout.readline(0.01)
-		
-		if not read_mark:
-		
-			str_value = EMPTY_REQUEST
-			
-			'''
-			WRITE TO DATABASE
-			'''
-			post = {Data.VALUE:str_value}
-			db.updateDB(mycoll,key,post)			
-		
-			#self.Lwm2mClientWrite(Data.VALUE,str_value)
-			
-			return READ_FAILURE
-		###############################
-		#retrieve the info from request
-		###############################
-		
-	'''
-		WRITE REQUEST
-	'''
-	
-	def ClientWriter(self, db, collection, key, clientNo , url, write_value):
-	
-		self.urlParse(url)
-		
-		valid_result = self.requestValidation(db, collection, key, clientNo,self.__obj)
-		
-		if str(valid_result) != OBJ_SUCCESS:
-		
-			print valid_result
-		
-			return valid_result
-			
-		print "Write requeset is valid"
-	
-		'''
-			start the write request 
-		'''
-		WRITE_REQUEST = WRITE_COMMAND + " " + str(clientNo) + " " + url + " " + str(write_value)
-			
-		print WRITE_REQUEST
-		
-		self.__lwm2m.stdin.write(WRITE_REQUEST)
-		
-		time.sleep(0.5)
-	
-		print "start to check write"
-
-		write_result = self.__write_check(db, collection, key, clientNo, url, write_value)
-		
-		return write_result
-		
-	def __write_check(self,db, collection, key, clientNo, url, write_value):
-	
-		
-		#read_result = ClientReader(db, collection, key, clientNo , url)
-		
-		'''
-		READ FROM BROKER DATABASE, determine if there is any client
-		'''
-		array = db.getObject(collection,key)
-		num_clients = array[Data.NUM_CLIENTS]
-		if num_clients == "0":
-			
-			print NO_CLIENT
-			return WRITE_FAILURE
-		
-		'''
-		READ FROM CLIENT DATABASE
-		'''
-		print clientNo
-		client_list = array[Data.CLIENT_LIST]
-		print client_list
-		client = str(client_list[str(clientNo)])
-		
-		
-		client_key = {Data.ROLE:"Client",Data.ID:client}
-		print client_key 
-		
-		
-		post = {Data.UPDATE_URL : write_value}
-		db.updateDB(collection, client_key,post)
-		
-		
-		WRITE_REQUEST = WRITE_COMMAND + " " + str(clientNo) + " " + url + " " + str(write_value)
-			
-		print WRITE_REQUEST
-		 
-		self.__lwm2m.stdin.write(WRITE_REQUEST)
-		
-		#Stime.sleep(0.5)
-			
-	
-		read_value = "Unset"
-
-		while read_value == "Unset":
-			time.sleep(0.05)
-			array = db.getObject(collection,client_key)
-			read_value = str(array[Data.UPDATE_URL])
-			print "during writing, the update url is {}".format(read_value)
-		
-		print "the final update url is {}".format(read_value)
-		if (str(read_value) == str(write_value)):
-			
-			return WRITE_SUCCESS
-			
-		else:
-			print "the written value is not passed"
-			return WRITE_FAILURE
-		
-	'''
-		EXECUTE REQUEST
-	
-	'''
-	
-	def ClientExecuter(self, db, collection, key, clientNo , url):
-	
-		self.urlParse(url)
-		
-		valid_result = self.requestValidation(db, collection, key, clientNo,self.__obj)
-		
-		if str(valid_result) != OBJ_SUCCESS:
-		
-			print valid_result
-		
-			return valid_result
-			
-		print "Execute requeset is valid"
-	
-		'''
-			start the write request 
-		'''
-		#EXECUTE_REQUEST = EXECUTE_COMMAND + " " + str(clientNo) + " " + url
-		
-		#print EXECUTE_REQUEST
-		 
-		#self.__lwm2m.stdin.write(EXECUTE_REQUEST)
-		
-		#time.sleep(0.5)
-		
-		execute_result = self.__execute_check(db, collection, key, clientNo, url)
-		
-		return execute_result
-
-		#self.Lwm2mClientWrite(Data.SEND_FLAG,"done")
-		
-	def __execute_check(self,db, collection, key, clientNo, url):
-		
-		'''
-		READ FROM CLIENT DATABASE
-		'''
-		array = db.getObject(collection,key)
-		client_list = array[Data.CLIENT_LIST]
-		client = str(client_list[str(clientNo)])
-		client_key = {Data.ROLE:"Client",Data.ID:client}
-		print client_key
-		
-		EXECUTE_REQUEST = EXECUTE_COMMAND + " " + str(clientNo) + " " + url
-		  
-		print EXECUTE_REQUEST
-		
-		
-		post = {Data.USER_INPUT:"None",Data.UPDATE_RESULT:"None",Data.UPDATE_STATE:"idle"}
-		db.updateDB(collection,client_key,post)		
-		update_result = "None"
-		 
-		self.__lwm2m.stdin.write(EXECUTE_REQUEST)
-		'''
-		while True:
-			time.sleep(0.5)
-			array = db.getObject(collection,client_key)
-			usr_input = str(array[Data.USER_INPUT])
-			print "ready to be updated"
-			if usr_input == "update":
-				break 
-		'''
-		print "the initial update result is set to None"
-		while update_result == "None":	
-			time.sleep(0.05)
-			array = db.getObject(collection,client_key)
-			update_state = str(array[Data.UPDATE_STATE])
-			update_result = str(array[Data.UPDATE_RESULT])
-			#print "During updating, the result of update is: {}".format(update_result)
-				
-		
-			
-		'''
-		WRITE TO DATABASE
-		'''
-		print "the final result of update is: {}".format(update_result)
-		if int(update_result) == int(1):
-			return EXECUTE_SUCCESS
-		else:
-			return EXECUTE_FAILURE
 		
 	'''
 		LIST REGISTED CLIENTS
@@ -1431,44 +884,6 @@ class SP():
 	"""	
 
 	
-	
-	def groupUpdate(self,db,collection,key,group_size,target_url):
-		
-		i = 0
-		url = CONTAINER_NAME #/10400/0/0
-		value = target_url
-		processed_node = 0
-		successful_node = 0
-		failed_node = 0
-		post = {Data.NUM_PROCESSED_NODE: processed_node,Data.NUM_SUCCESSFUL_NODE:successful_node, Data.NUM_FAILED_NODE:failed_node}
-		db.updateDB(collection, key, post)
-		
-		while True:
-
-			if i >= int(group_size):
-				break
-			
-			write_result = self.ClientWriter(db, collection, key, i , url, value)
-			
-			if write_result != WRITE_SUCCESS:
-				print "client {} write failure".format(i)
-				failed_node = failed_node + 1
-			else:
-				print "client {} write success".format(i)
-				url = CONTAINER_UPDATE
-				execute_result = self.ClientExecuter(db, collection, key, i, url)
-				if execute_result != EXECUTE_SUCCESS:
-					print "client {} execute failure".format(i)
-					failed_node = failed_node + 1
-				else:
-					print "client {} execute success".format(i)
-					successful_node = successful_node + 1
-			
-			i = i + 1
-			processed_node = processed_node + 1
-			print "processed node:{}, success node:{}, failed node:{}".format(processed_node,successful_node,failed_node)
-			post = {Data.NUM_PROCESSED_NODE: processed_node,Data.NUM_SUCCESSFUL_NODE:successful_node, Data.NUM_FAILED_NODE:failed_node}
-			db.updateDB(collection, key, post)
 			
 		
 	def Main_Server_Process(self,endpoint,host_ip,db_ip):

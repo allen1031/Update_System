@@ -162,12 +162,15 @@ def Broker():
 						
 					update_url = array[Data.UPDATE_URL]
 					
-					if update_url == None:
+					update_url = array[Data.UPDATE_URL]
+					
+					forward_url = serverObj.Download_and_Forward(update_url,localhost)
+					if forward_url == None:
 						print "INVALID URL"
 						return 1
 				 
 					#serverObj.GroupUpdate(db,mycoll,key,num_nodes2update, update_url)
-					serverObj.ClientUpdate(db_ip,db,mycoll,key,num_nodes2update, update_url,localhost)
+					serverObj.ClientUpdate(db_ip,db,mycoll,key,num_nodes2update, forward_url,localhost)
 					duration_broker = round((time.time() - start_time),2)
 					post = {Data.update_time_in_broker:duration_broker}
 					db.updateDB(mycoll,key,post)
