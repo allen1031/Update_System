@@ -128,6 +128,8 @@ void copy_security_object(lwm2m_object_t * objectDest, lwm2m_object_t * objectSr
 /*
  * mongodb_op.c
  */
+ 
+/*
 int db_connection(char *uri_str, mongoc_collection_t *collection);
 int doc_query(char * client_url, bson_t *query);
 int doc_insert(char *client_url, bson_t* doc);
@@ -137,5 +139,5 @@ int doc_count(char *count_uri, bson_t* query);
 int doc_read_str(char *read_uri, bson_t* query, char *key, char* value);
 int doc_read_int(char *read_uri, bson_t* query, char *key, int32_t value);
 int doc_read_double(char *read_uri, bson_t* query, char *key, double value);
-int JSON2BSON();
+int JSON2BSON();*/
 #endif /* LWM2MCLIENT_H_ */
